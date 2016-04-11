@@ -1,1 +1,1 @@
-# HGCalTBSimulation: The code set up was taken from Vincenzo Ciriolo
+# HGCalTBSimulation: The code set up was adapted from Vincenzo Ciriolo
