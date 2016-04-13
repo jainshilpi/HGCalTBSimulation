@@ -125,8 +125,8 @@ ExN01DetectorConstruction::ExN01DetectorConstruction(TString config)
   
   ///sensor
   nsensorLayer = 18;
-  sensorWidth     = 5*CLHEP::mm;
-  //sensorWidth     = 20*CLHEP::cm;
+  //sensorWidth     = 5*CLHEP::mm;
+  sensorWidth     = 20*CLHEP::cm;
 
 
   ///distance between the sensors
@@ -139,9 +139,13 @@ ExN01DetectorConstruction::ExN01DetectorConstruction(TString config)
   double sensorThick2 = 200*CLHEP::mm/1000.; 
   double sensorThick3 = 300*CLHEP::mm/1000.; 
 
+  
   ////////////1st fixed
-  if(config="123"){
-    
+
+  
+  if(config=="123"){
+
+    std::cout<<"Selected config "<<config<<std::endl;
     for(int i=0; i<6; i++)
       sensorThickness[i] = sensorThick1;
     
@@ -153,8 +157,9 @@ ExN01DetectorConstruction::ExN01DetectorConstruction(TString config)
 
   }
 
-  if(config="132"){
+  if(config=="132"){
     
+    std::cout<<"Selected config "<<config<<std::endl;
     for(int i=0; i<6; i++)
       sensorThickness[i] = sensorThick1;
     
@@ -167,8 +172,9 @@ ExN01DetectorConstruction::ExN01DetectorConstruction(TString config)
   }
 
   ////////////2nd takes 1st
-  if(config="213"){
+  if(config=="213"){
     
+    std::cout<<"Selected config "<<config<<std::endl;
     for(int i=0; i<6; i++)
       sensorThickness[i] = sensorThick2;
     
@@ -181,8 +187,9 @@ ExN01DetectorConstruction::ExN01DetectorConstruction(TString config)
   }
 
 
-  if(config="231"){
+  if(config=="231"){
 
+    std::cout<<"Selected config "<<config<<std::endl;
     for(int i=0; i<6; i++)
       sensorThickness[i] = sensorThick2;
     
@@ -196,8 +203,9 @@ ExN01DetectorConstruction::ExN01DetectorConstruction(TString config)
 
 
   ////////////3rd takes 1st
-  if(config="312"){
+  if(config=="312"){
     
+    std::cout<<"Selected config "<<config<<std::endl;
     for(int i=0; i<6; i++)
       sensorThickness[i] = sensorThick3;
     
@@ -210,8 +218,9 @@ ExN01DetectorConstruction::ExN01DetectorConstruction(TString config)
   }
 
 
-  if(config="321"){
+  if(config=="321"){
 
+    std::cout<<"Selected config "<<config<<std::endl;
     for(int i=0; i<6; i++)
       sensorThickness[i] = sensorThick3;
     
@@ -396,7 +405,10 @@ G4PVPlacement* worldPhys = new G4PVPlacement(0,G4ThreeVector(),worldLog,"World",
    trans = G4ThreeVector(0,0,pos_z);
    
    
-   if (verbosity > 0) std::cout<<"For "<<i<<"th layer, dist between two sensors and Z pos is "<<dist[i]<<" " <<pos_z<<std::endl;
+   if (verbosity > 0) {
+     std::cout<<"Thickness of "<<i<<"th layer is "<<sensorThickness[i]<<std::endl;
+     std::cout<<"For "<<i<<"th layer, dist between two sensors and Z pos is "<<dist[i]<<" " <<pos_z<<std::endl;
+   }
    //new G4PVPlacement(0,trans,logSens,Form("sensitiveLayer_%d",i),worldLog,false,i+1); ///last argument is for the copy number - useful later
    new G4PVPlacement(0,trans,logSens,"sensitiveLayer",worldLog,false,i+1); ///last argument is for the copy number - useful later
    //pos_z += 4*CLHEP::cm + 2*0.5*sensorThickness;
