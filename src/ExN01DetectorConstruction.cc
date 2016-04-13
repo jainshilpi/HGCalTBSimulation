@@ -65,6 +65,11 @@ G4double abs_hx = 0.1*m;
 G4double abs_hy = 0.1*m;
 */
 
+
+double dist[18];
+
+
+
 ExN01DetectorConstruction* ExN01DetectorConstruction::fInstance = NULL ;
 
 int verbosity = 1;
@@ -92,9 +97,11 @@ G4double world_hz = 2.*m;
 
 
 
-
-
 ExN01DetectorConstruction::ExN01DetectorConstruction()
+{}
+
+
+ExN01DetectorConstruction::ExN01DetectorConstruction(TString config)
  :  worldLog(0), absLog(0), outLog(0),
     worldPhys(0), absPhys(0), outPhys(0)
 {
@@ -117,18 +124,109 @@ ExN01DetectorConstruction::ExN01DetectorConstruction()
 
   
   ///sensor
-  nsensorLayer = 6;
+  nsensorLayer = 18;
   sensorWidth     = 5*CLHEP::mm;
-  //G4double sensorWidth     = 0.3*CLHEP::m;
-  sensorThickness[0] = 300*CLHEP::mm/1000.;
-  sensorThickness[1] = 300*CLHEP::mm/1000;
-  sensorThickness[2] = 300*CLHEP::mm/1000; 
-  sensorThickness[3] = 300*CLHEP::mm/1000;
-  sensorThickness[4] = 300*CLHEP::mm/1000;
-  sensorThickness[5] = 300*CLHEP::mm/1000;
-  
-  
-  
+  //sensorWidth     = 20*CLHEP::cm;
+
+
+  ///distance between the sensors
+  for(int i=0; i<nsensorLayer; i++){
+    if(i!=5 && i!=11) dist[i] = 1*CLHEP::cm; 
+    else dist[i] = 2*CLHEP::cm;
+  }
+
+  double sensorThick1 = 120*CLHEP::mm/1000.; 
+  double sensorThick2 = 200*CLHEP::mm/1000.; 
+  double sensorThick3 = 300*CLHEP::mm/1000.; 
+
+  ////////////1st fixed
+  if(config="123"){
+    
+    for(int i=0; i<6; i++)
+      sensorThickness[i] = sensorThick1;
+    
+    for(int i=6; i<12; i++)
+      sensorThickness[i] = sensorThick2;
+    
+    for(int i=12; i<18; i++)
+      sensorThickness[i] = sensorThick3;
+
+  }
+
+  if(config="132"){
+    
+    for(int i=0; i<6; i++)
+      sensorThickness[i] = sensorThick1;
+    
+    for(int i=6; i<12; i++)
+      sensorThickness[i] = sensorThick3;
+    
+    for(int i=12; i<18; i++)
+      sensorThickness[i] = sensorThick2;
+
+  }
+
+  ////////////2nd takes 1st
+  if(config="213"){
+    
+    for(int i=0; i<6; i++)
+      sensorThickness[i] = sensorThick2;
+    
+    for(int i=6; i<12; i++)
+      sensorThickness[i] = sensorThick1;
+    
+    for(int i=12; i<18; i++)
+      sensorThickness[i] = sensorThick3;
+
+  }
+
+
+  if(config="231"){
+
+    for(int i=0; i<6; i++)
+      sensorThickness[i] = sensorThick2;
+    
+    for(int i=6; i<12; i++)
+      sensorThickness[i] = sensorThick3;
+    
+    for(int i=12; i<18; i++)
+      sensorThickness[i] = sensorThick1;
+
+  }
+
+
+  ////////////3rd takes 1st
+  if(config="312"){
+    
+    for(int i=0; i<6; i++)
+      sensorThickness[i] = sensorThick3;
+    
+    for(int i=6; i<12; i++)
+      sensorThickness[i] = sensorThick1;
+    
+    for(int i=12; i<18; i++)
+      sensorThickness[i] = sensorThick2;
+
+  }
+
+
+  if(config="321"){
+
+    for(int i=0; i<6; i++)
+      sensorThickness[i] = sensorThick3;
+    
+    for(int i=6; i<12; i++)
+      sensorThickness[i] = sensorThick2;
+    
+    for(int i=12; i<18; i++)
+      sensorThickness[i] = sensorThick1;
+
+  }
+
+
+
+
+
 }
 
 ExN01DetectorConstruction::~ExN01DetectorConstruction()
@@ -227,18 +325,13 @@ G4PVPlacement* worldPhys = new G4PVPlacement(0,G4ThreeVector(),worldLog,"World",
 
 //G4double abs_hz = 2*0.5*X_0*m;
 
-G4Box* absBox = new G4Box("Abs", 0.5*abs_hx, 0.5*abs_hy, 0.5*abs_hz);
-
-//G4LogicalVolume* absLog = new G4LogicalVolume(absBox, Cu, "Abs");
-G4LogicalVolume* absLog = new G4LogicalVolume(absBox, Pb, "Abs");
-
  G4double pos_x =  0.0*CLHEP::m;
  G4double pos_y =  0.0*CLHEP::m;
 //G4double pos_z =  4.*0.5*n*X_0;//+0.1*meter;
  G4double pos_z =  0.1 * CLHEP::m;
 //G4double pos_z =  0.20*meter;
 
-G4PVPlacement* absPhys = new G4PVPlacement(0,G4ThreeVector(pos_x, pos_y, pos_z),absLog,"Abs",worldLog,false,0);
+
 
 
 ///polyethylene attached to the absorber
@@ -246,17 +339,25 @@ G4PVPlacement* absPhys = new G4PVPlacement(0,G4ThreeVector(pos_x, pos_y, pos_z),
 
 
  G4Box* coverBox = new G4Box("coverBox", 0.5*abs_hx, 0.5*abs_hy, 0.5*thickness_cover);
- G4LogicalVolume* coverLog = new G4LogicalVolume(coverBox, Pb, "cover");
+ G4LogicalVolume* coverLog = new G4LogicalVolume(coverBox, c2h4_n, "cover");
  
+ 
+ //for now - remove it
+ G4PVPlacement* coverPhys = new G4PVPlacement(0,G4ThreeVector(pos_x, pos_y, pos_z),coverLog,"cover",worldLog,false,0);
+
+
  pos_x =  0.0*CLHEP::m;
  pos_y =  0.0*CLHEP::m;
  pos_z =  pos_z + 0.5*abs_hz + 0.5*thickness_cover;
  //G4double pos_z =  0.20*meter;
  
- //for now - remove it
- ///G4PVPlacement* coverPhys = new G4PVPlacement(0,G4ThreeVector(pos_x, pos_y, pos_z),coverLog,"cover",worldLog,false,0);
+ G4Box* absBox = new G4Box("Abs", 0.5*abs_hx, 0.5*abs_hy, 0.5*abs_hz);
  
-////sensors now - square shaped - place 4 layers of sensor
+ //G4LogicalVolume* absLog = new G4LogicalVolume(absBox, Cu, "Abs");
+ G4LogicalVolume* absLog = new G4LogicalVolume(absBox, Pb, "Abs");
+ 
+ G4PVPlacement* absPhys = new G4PVPlacement(0,G4ThreeVector(pos_x, pos_y, pos_z),absLog,"Abs",worldLog,false,0); 
+ ////sensors now - square shaped - place 4 layers of sensor
  //G4Box* solid = new G4Box("ECalSensitive", 0.5*sensorWidth, 0.5*sensorWidth, 0.5*sensorThickness);
  /*G4Box* solid = new G4Box("ECalSensitive", 0.5*sensorWidth, 0.5*sensorWidth, 0.5*sensorThickness[0]);
  G4LogicalVolume *logSens = new G4LogicalVolume(solid, matSi, "ECalSensitive");
@@ -272,7 +373,11 @@ G4PVPlacement* absPhys = new G4PVPlacement(0,G4ThreeVector(pos_x, pos_y, pos_z),
  pos_x =  0.0*CLHEP::m;
  pos_y =  0.0*CLHEP::m;
  //pos_z =  pos_z + 0.5*thickness_cover + 0.5*sensorThickness + 7.2*CLHEP::cm; //position of first layer
- pos_z =  pos_z + 0.5*thickness_cover + 0.5*sensorThickness[0] + 7.2*CLHEP::cm; //position of first layer
+ //pos_z =  pos_z + 0.5*thickness_cover + 0.5*sensorThickness[0] + 7.2*CLHEP::cm; //position of first layer
+ //pos_z =  pos_z + 0.5*thickness_cover + 0.5*sensorThickness[0] + 1.0*CLHEP::cm; //position of first layer
+
+ pos_z =  pos_z + 0.5*abs_hz + 0.5*sensorThickness[0] + 1.0*CLHEP::cm; //position of first layer
+ 
  if (verbosity > 0) std::cout<<"Now position of Z "<<pos_z<<std::endl;
 
  G4ThreeVector trans;
@@ -291,14 +396,15 @@ G4PVPlacement* absPhys = new G4PVPlacement(0,G4ThreeVector(pos_x, pos_y, pos_z),
    trans = G4ThreeVector(0,0,pos_z);
    
    
-   if (verbosity > 0) std::cout<<"For "<<i<<"th layer, Z pos is "<<pos_z<<std::endl;
+   if (verbosity > 0) std::cout<<"For "<<i<<"th layer, dist between two sensors and Z pos is "<<dist[i]<<" " <<pos_z<<std::endl;
    //new G4PVPlacement(0,trans,logSens,Form("sensitiveLayer_%d",i),worldLog,false,i+1); ///last argument is for the copy number - useful later
    new G4PVPlacement(0,trans,logSens,"sensitiveLayer",worldLog,false,i+1); ///last argument is for the copy number - useful later
    //pos_z += 4*CLHEP::cm + 2*0.5*sensorThickness;
    
    //pos_z += 4*CLHEP::cm + 2*0.5*sensorThickness[0];
-   
-   if(i != (nsensorLayer-1)) pos_z += 2*CLHEP::cm + 0.5*sensorThickness[i] + 0.5*sensorThickness[i+1];
+ 
+
+   if(i != (nsensorLayer-1)) pos_z += dist[i] + 0.5*sensorThickness[i] + 0.5*sensorThickness[i+1];
  }
 
 

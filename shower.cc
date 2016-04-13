@@ -115,7 +115,15 @@ int main(int argc,char** argv)
 
   // set mandatory initialization classes
   //
-  G4VUserDetectorConstruction* detector = new ExN01DetectorConstruction;
+
+  ///config is a string which can take 6 configuration of the sort 123, 321 etc.
+  ///1 referes to 120 um diodes; 2 to 200 um and 3 to 300 um
+  ///123: 120 placed first infront of the beam; then 200 um and then 300 um farthest
+
+  TString config = "123";
+
+
+  G4VUserDetectorConstruction* detector = new ExN01DetectorConstruction(config);
   runManager->SetUserInitialization(detector);
   //
   G4VUserPhysicsList* physics = new ExN01PhysicsList;
@@ -183,6 +191,7 @@ int main(int argc,char** argv)
 #ifdef G4UI_USE
     G4UIExecutive* ui = new G4UIExecutive(argc, argv);
 #ifdef G4VIS_USE
+    //ui->SessionStart();
     UImanager->ApplyCommand("/control/execute vis.mac");
 #endif
     ui->SessionStart();
@@ -198,6 +207,7 @@ int main(int argc,char** argv)
 */
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+      
   // Get the pointer to the UI manager and set verbosities
   //
   G4UImanager* UI = G4UImanager::GetUIpointer();
@@ -214,8 +224,8 @@ int main(int argc,char** argv)
   // Start a run
   //
   
-  //G4int numberOfEvent = 1;
-  G4int numberOfEvent = 5000;
+  G4int numberOfEvent = 2;
+  //G4int numberOfEvent = 2500;
   cout<<"check4"<<endl;
   runManager->BeamOn(numberOfEvent);
   

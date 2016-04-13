@@ -72,6 +72,8 @@ void SteppingAction::UserSteppingAction(const G4Step* theStep)
     }
   */
 
+
+
   
   if  (pre_volName == "sensitiveLayer"){
     
@@ -109,6 +111,18 @@ void SteppingAction::UserSteppingAction(const G4Step* theStep)
     CreateTree::Instance() -> sensorE[copyIDinZ] = CreateTree::Instance() -> sensorE[copyIDinZ] + edepStep;
     
     if(verbosity>0) cout<<"AFTER ADDING sensorE["<<copyIDinZ<<"] "<<CreateTree::Instance() -> sensorE[copyIDinZ]<<endl;
+
+
+    ////try to calculate hte transverse size of the shower for every Z
+    
+    double radius = sqrt( pow(point1->GetPosition().x(),2) + pow(point1->GetPosition().y(),2) );
+    int radius_bin = int(radius/2*CLHEP::mm);
+    
+    CreateTree::Instance() -> EnergyInTrans[copyIDinZ][radius_bin] += edepStep;
+    CreateTree::Instance() -> radiusBin[copyIDinZ][radius_bin] = radius_bin;
+    
+    //std::cout<<"trans energy and radius "<<CreateTree::Instance() -> EnergyInTrans[copyIDinZ][radius_bin]<<" " <<CreateTree::Instance() -> radiusBin[copyIDinZ][radius_bin]<<" "<<radius <<std::endl;
+
   }
 
 

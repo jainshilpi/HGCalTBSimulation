@@ -32,10 +32,13 @@
 #ifndef ExN01DetectorConstruction_H
 #define ExN01DetectorConstruction_H 1
 
+#include "TString.h"
+
 class G4LogicalVolume;
 class G4VPhysicalVolume;
 
 const double x0_pb = 0.0056*CLHEP::m;
+//const double x0_pb = 0.003504*CLHEP::m;
 
 #include "G4VUserDetectorConstruction.hh"
 
@@ -44,6 +47,7 @@ class ExN01DetectorConstruction : public G4VUserDetectorConstruction
 public:
   
   ExN01DetectorConstruction();
+  ExN01DetectorConstruction(TString config);
   ~ExN01DetectorConstruction();
   
   G4VPhysicalVolume* Construct();
@@ -53,7 +57,7 @@ public:
   G4double abs_hx;
   G4double abs_hy;
   G4double sensorWidth;
-  G4double sensorThickness[6];
+  G4double sensorThickness[18];
   double thickness_cover;
   
   static ExN01DetectorConstruction* Instance () { return fInstance ; } ;

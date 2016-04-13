@@ -41,14 +41,16 @@ public:
   int   Event ;
 
   float EnergyTotalAbs ;
-  float sensorE[6];
+  float sensorE[18];
   float EnergyPerX0[30];  
 
   float EnergyTotal;
 
   float depth_abs[30];
-  
 
+  float EnergyInTrans[18][1000];
+
+  int radiusBin[18][1000];
 } ;
 
 #endif

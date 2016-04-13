@@ -43,7 +43,7 @@ void EventAction::BeginOfEventAction (const G4Event* evt)
  CreateTree::Instance ()->EnergyTotalAbs = 0 ;  
 
   ////put the energy in each layer separately
-  for(int i=0; i<6; i++) ///make it better by making 4 a common variable
+  for(int i=0; i<18; i++) ///make it better by making 4 a common variable
     {
       CreateTree::Instance ()->sensorE[i] = 0;
       //std::cout<<"At the bginning of event .... sensorE["<<i<<"] is "<<CreateTree::Instance ()->sensorE[i]<<std::endl;
@@ -54,6 +54,15 @@ void EventAction::BeginOfEventAction (const G4Event* evt)
     {
       CreateTree::Instance ()->EnergyPerX0[i] = 0;
       CreateTree::Instance ()->depth_abs[i] = -9999;
+    }
+
+
+  for(int i=0; i<18; i++)
+    {
+      for(int j=0; j<1000; j++){
+	CreateTree::Instance ()->EnergyInTrans[i][j] = 0;
+	CreateTree::Instance ()->radiusBin[i][j] = 0;
+      }
     }
 
   ///
@@ -79,9 +88,14 @@ CreateTree::Instance ()->Fill ();
 
  ////SJ printout
 
- for(int i=0; i<6; i++)
+ for(int i=0; i<18; i++)
    std::cout<< CreateTree::Instance() -> sensorE[i] <<std::endl;
- 
+
+ /*
+ for(int i=0; i<18; i++)
+   for(int j=0; j<200; j++)
+     std::cout<< CreateTree::Instance() -> EnergyInTrans[i][j] <<std::endl;
+ */
 }
 
 // ----------------

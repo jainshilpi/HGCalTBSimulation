@@ -62,11 +62,11 @@ void ExG4PrimaryGeneratorAction01::GeneratePrimaries(G4Event* anEvent)
 {
   srand(time(NULL));
   
-  //G4double posx = rand_->X()*mm;
-  //G4double posy = rand_->Y()*mm;
+  G4double posx = rand_->X()*mm;
+  G4double posy = rand_->Y()*mm;
 
-  G4double posx = 0;
-  G4double posy = 0;
+  //G4double posx = 0;
+  //G4double posy = 0;
   G4double posz = -10*CLHEP::cm;
   // default particle kinematic
   const G4String& particleName = "e-";

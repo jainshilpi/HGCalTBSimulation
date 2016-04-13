@@ -34,11 +34,13 @@ CreateTree::CreateTree (TString name)
 
   //this->GetTree ()->Branch ("EnergyTotal", &this->EnergyTotal, "EnergyTotal/F") ;    
 
-  this->GetTree ()->Branch ("sensorE", sensorE, "sensorE[6]/F") ;
+  this->GetTree ()->Branch ("sensorE", sensorE, "sensorE[18]/F") ;
   
   this->GetTree ()->Branch ("EnergyPerX0", EnergyPerX0, "EnergyPerX0[30]/F") ;
   this->GetTree ()->Branch ("depth_abs", depth_abs, "depth_abs[30]/F") ;  
 
+  this->GetTree ()->Branch ("EnergyInTrans", EnergyInTrans, "EnergyInTrans[18][200]/F") ;
+  this->GetTree ()->Branch ("radiusBin", radiusBin, "radiusBin[18][200]/I") ;
 
   this->Clear () ;
   cout<<"tree"<<endl;
@@ -81,7 +83,7 @@ void CreateTree::Clear ()
   EnergyTotalAbs = 0 ;  
 
   ////put the energy in each layer separately
-  for(int i=0; i<6; i++) ///make it better by making 4 a common variable
+  for(int i=0; i<18; i++) ///make it better by making 4 a common variable
     sensorE[i] = 0;
 
 
@@ -92,4 +94,10 @@ void CreateTree::Clear ()
       depth_abs[ii] = -9999;
     }
   
+  for(int ii=0; ii<18; ii++)
+    {
+      for(int jj=0; jj<1000; jj++)
+	EnergyInTrans[ii][jj] = 0;
+    }
+
  }
