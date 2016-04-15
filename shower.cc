@@ -111,15 +111,22 @@ int main(int argc,char** argv)
   TString config = "123";
   //TString config = "321";
   //TString config = "213";
-  bool add2Abs = false;
-  //bool add2Abs = true;
+  //bool add2Abs = false;
+  bool add2Abs = true;
+
+  bool add3Abs = true;
 
 
-  if(add2Abs) 
-    nome_file = "test_"+argomento+"_"+config+"_with2Abs.root";
+  nome_file = "test_"+argomento+"_"+config;
   
-  else  
-    nome_file = "test_"+argomento+"_"+config+".root";
+  if(add2Abs) 
+    nome_file = nome_file+"_with2Abs";
+
+  if(add3Abs) 
+    nome_file = nome_file+"_with3Abs";
+    
+  nome_file = nome_file+".root";
+
 
   cout<<nome_file<<endl;
     	
@@ -134,7 +141,7 @@ int main(int argc,char** argv)
   ///1 referes to 120 um diodes; 2 to 200 um and 3 to 300 um
   ///123: 120 placed first infront of the beam; then 200 um and then 300 um farthest
   
-  G4VUserDetectorConstruction* detector = new ExN01DetectorConstruction(config,add2Abs);
+  G4VUserDetectorConstruction* detector = new ExN01DetectorConstruction(config,add2Abs, add3Abs);
   runManager->SetUserInitialization(detector);
   //
   G4VUserPhysicsList* physics = new ExN01PhysicsList;

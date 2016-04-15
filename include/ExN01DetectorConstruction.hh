@@ -47,7 +47,7 @@ class ExN01DetectorConstruction : public G4VUserDetectorConstruction
 public:
   
   ExN01DetectorConstruction();
-  ExN01DetectorConstruction(TString config, bool add2Abs);
+  ExN01DetectorConstruction(TString config, bool add2Abs, bool add3Abs);
   ~ExN01DetectorConstruction();
   
   G4VPhysicalVolume* Construct();
@@ -58,8 +58,10 @@ public:
   G4double abs_hy;
 
   G4double abs_hz2;
+  G4double abs_hz3;
 
   bool add2Abs;
+  bool add3Abs;
   
   G4double sensorWidth;
   G4double sensorThickness[18];

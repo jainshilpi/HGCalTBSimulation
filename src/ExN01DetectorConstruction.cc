@@ -101,7 +101,7 @@ ExN01DetectorConstruction::ExN01DetectorConstruction()
 {}
 
 
-ExN01DetectorConstruction::ExN01DetectorConstruction(TString config, bool add2Abs_tmp)
+ExN01DetectorConstruction::ExN01DetectorConstruction(TString config, bool add2Abs_tmp, bool add3Abs_tmp)
  :  worldLog(0), absLog(0), outLog(0),
     worldPhys(0), absPhys(0), outPhys(0)
 {
@@ -117,6 +117,7 @@ ExN01DetectorConstruction::ExN01DetectorConstruction(TString config, bool add2Ab
 
 
   add2Abs = add2Abs_tmp;
+  add3Abs = add3Abs_tmp;
 
   thickness_cover = 1.5*CLHEP::cm;   
   //G4double abs_hz = 5*CLHEP::cm;    //absorber thickness
@@ -127,7 +128,9 @@ ExN01DetectorConstruction::ExN01DetectorConstruction(TString config, bool add2Ab
   abs_hy = 20*CLHEP::cm;
   
   abs_hz2 = 2*x0_pb;    //absorber thickness
-  //abs_hz2 = abs_hz;    //absorber thickness
+
+  abs_hz3 = 2*x0_pb;    //absorber thickness
+
 
   ///sensor
   nsensorLayer = 18;
@@ -434,9 +437,7 @@ G4PVPlacement* worldPhys = new G4PVPlacement(0,G4ThreeVector(),worldLog,"World",
  
 
    ///after 6 layers place 2X0 of absorber
-   
-   ///check with esteban about the distances
-   
+   ///Abs - 1 cm - 6 sensor - 1cm - Abs - 1 cm - 6 sensors
    if(add2Abs)
      if(i==5) {
        
@@ -452,6 +453,26 @@ G4PVPlacement* worldPhys = new G4PVPlacement(0,G4ThreeVector(),worldLog,"World",
        
        //also in that case, the dis[5] = 1 cm i.e. distance of next sensor (7th) with the abs
        dist[5] = 1*CLHEP::cm;
+     }
+   
+
+   ///after 2nd set of 6 layers, place 2X0 of absorber again
+   ///Abs - 1 cm - 6 sensor - 1cm - Abs - 1 cm - 6 sensors - <1 cm - Abs - 1 cm> - 6 sensors
+   if(add3Abs)
+     if(i==11) {
+       
+       ///2nd absorber
+       G4Box* absBox3 = new G4Box("Abs3", 0.5*abs_hx, 0.5*abs_hy, 0.5*abs_hz3);
+       G4LogicalVolume* absLog3 = new G4LogicalVolume(absBox3, Pb, "Abs3");
+       
+       pos_z += 1*CLHEP::cm + 0.5*abs_hz3; ///distance between 6th sensor and the absorber is kept 1cm
+       G4PVPlacement* absPhys3 = new G4PVPlacement(0,G4ThreeVector(pos_x, pos_y, pos_z),absLog3,"Abs3",worldLog,false,0); 
+       
+       ///after that next sensor will be placed at +0.5*abs_hz2
+       pos_z += 0.5*abs_hz3;
+       
+       //also in that case, the dis[5] = 1 cm i.e. distance of next sensor (7th) with the abs
+       dist[11] = 1*CLHEP::cm;
      }
    
 
