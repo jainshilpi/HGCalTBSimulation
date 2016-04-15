@@ -105,8 +105,22 @@ int main(int argc,char** argv)
     cout<<"please insert the energy of incoming electron in GeV"<<endl;
     return 0;
     }
+
+
+  TString argomento = (argv[1]);
+  TString config = "123";
+  //TString config = "321";
+  //TString config = "213";
+  bool add2Abs = false;
+  //bool add2Abs = true;
+
+
+  if(add2Abs) 
+    nome_file = "test_"+argomento+"_"+config+"_with2Abs.root";
   
-  nome_file = "test_060416.root";
+  else  
+    nome_file = "test_"+argomento+"_"+config+".root";
+
   cout<<nome_file<<endl;
     	
   // Construct the default run manager
@@ -119,11 +133,8 @@ int main(int argc,char** argv)
   ///config is a string which can take 6 configuration of the sort 123, 321 etc.
   ///1 referes to 120 um diodes; 2 to 200 um and 3 to 300 um
   ///123: 120 placed first infront of the beam; then 200 um and then 300 um farthest
-
-  TString config = "123";
-
-
-  G4VUserDetectorConstruction* detector = new ExN01DetectorConstruction(config);
+  
+  G4VUserDetectorConstruction* detector = new ExN01DetectorConstruction(config,add2Abs);
   runManager->SetUserInitialization(detector);
   //
   G4VUserPhysicsList* physics = new ExN01PhysicsList;
@@ -224,8 +235,8 @@ int main(int argc,char** argv)
   // Start a run
   //
   
-  G4int numberOfEvent = 2;
-  //G4int numberOfEvent = 2500;
+  //G4int numberOfEvent = 2;
+  G4int numberOfEvent = 2500;
   cout<<"check4"<<endl;
   runManager->BeamOn(numberOfEvent);
   

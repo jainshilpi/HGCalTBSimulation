@@ -101,11 +101,13 @@ ExN01DetectorConstruction::ExN01DetectorConstruction()
 {}
 
 
-ExN01DetectorConstruction::ExN01DetectorConstruction(TString config)
+ExN01DetectorConstruction::ExN01DetectorConstruction(TString config, bool add2Abs_tmp)
  :  worldLog(0), absLog(0), outLog(0),
     worldPhys(0), absPhys(0), outPhys(0)
 {
 
+
+  
   if ( fInstance )
     {
       return;
@@ -114,19 +116,23 @@ ExN01DetectorConstruction::ExN01DetectorConstruction(TString config)
   this->fInstance = this ;
 
 
+  add2Abs = add2Abs_tmp;
+
   thickness_cover = 1.5*CLHEP::cm;   
   //G4double abs_hz = 5*CLHEP::cm;    //absorber thickness
-  abs_hz = 3*x0_pb;    //absorber thickness
-  //abs_hz = 6*x0_pb;    //absorber thickness
+  //abs_hz = 3*x0_pb;    //absorber thickness
+  abs_hz = 6*x0_pb;    //absorber thickness
   //abs_hz = 30*x0_pb;    //absorber thickness
   abs_hx = 20*CLHEP::cm;
   abs_hy = 20*CLHEP::cm;
-
   
+  abs_hz2 = 2*x0_pb;    //absorber thickness
+  //abs_hz2 = abs_hz;    //absorber thickness
+
   ///sensor
   nsensorLayer = 18;
-  //sensorWidth     = 5*CLHEP::mm;
-  sensorWidth     = 20*CLHEP::cm;
+  sensorWidth     = 5*CLHEP::mm;
+  //sensorWidth     = 20*CLHEP::cm;
 
 
   ///distance between the sensors
@@ -135,10 +141,21 @@ ExN01DetectorConstruction::ExN01DetectorConstruction(TString config)
     else dist[i] = 2*CLHEP::cm;
   }
 
+  /*
   double sensorThick1 = 120*CLHEP::mm/1000.; 
   double sensorThick2 = 200*CLHEP::mm/1000.; 
   double sensorThick3 = 300*CLHEP::mm/1000.; 
+  */
 
+  double sensorThick1 = 140*CLHEP::mm/1000.; 
+  double sensorThick2 = 220*CLHEP::mm/1000.; 
+  double sensorThick3 = 290*CLHEP::mm/1000.; 
+  
+
+  /*double sensorThick1 = 14*CLHEP::mm; 
+  double sensorThick2 = 22*CLHEP::mm; 
+  double sensorThick3 = 29*CLHEP::mm; 
+  */
   
   ////////////1st fixed
 
@@ -351,7 +368,6 @@ G4PVPlacement* worldPhys = new G4PVPlacement(0,G4ThreeVector(),worldLog,"World",
  G4LogicalVolume* coverLog = new G4LogicalVolume(coverBox, c2h4_n, "cover");
  
  
- //for now - remove it
  G4PVPlacement* coverPhys = new G4PVPlacement(0,G4ThreeVector(pos_x, pos_y, pos_z),coverLog,"cover",worldLog,false,0);
 
 
@@ -361,11 +377,12 @@ G4PVPlacement* worldPhys = new G4PVPlacement(0,G4ThreeVector(),worldLog,"World",
  //G4double pos_z =  0.20*meter;
  
  G4Box* absBox = new G4Box("Abs", 0.5*abs_hx, 0.5*abs_hy, 0.5*abs_hz);
- 
- //G4LogicalVolume* absLog = new G4LogicalVolume(absBox, Cu, "Abs");
  G4LogicalVolume* absLog = new G4LogicalVolume(absBox, Pb, "Abs");
- 
  G4PVPlacement* absPhys = new G4PVPlacement(0,G4ThreeVector(pos_x, pos_y, pos_z),absLog,"Abs",worldLog,false,0); 
+
+
+
+
  ////sensors now - square shaped - place 4 layers of sensor
  //G4Box* solid = new G4Box("ECalSensitive", 0.5*sensorWidth, 0.5*sensorWidth, 0.5*sensorThickness);
  /*G4Box* solid = new G4Box("ECalSensitive", 0.5*sensorWidth, 0.5*sensorWidth, 0.5*sensorThickness[0]);
@@ -416,10 +433,33 @@ G4PVPlacement* worldPhys = new G4PVPlacement(0,G4ThreeVector(),worldLog,"World",
    //pos_z += 4*CLHEP::cm + 2*0.5*sensorThickness[0];
  
 
+   ///after 6 layers place 2X0 of absorber
+   
+   ///check with esteban about the distances
+   
+   if(add2Abs)
+     if(i==5) {
+       
+       ///2nd absorber
+       G4Box* absBox2 = new G4Box("Abs2", 0.5*abs_hx, 0.5*abs_hy, 0.5*abs_hz2);
+       G4LogicalVolume* absLog2 = new G4LogicalVolume(absBox2, Pb, "Abs2");
+       
+       pos_z += 1*CLHEP::cm + 0.5*abs_hz2; ///distance between 6th sensor and the absorber is kept 1cm
+       G4PVPlacement* absPhys2 = new G4PVPlacement(0,G4ThreeVector(pos_x, pos_y, pos_z),absLog2,"Abs2",worldLog,false,0); 
+       
+       ///after that next sensor will be placed at +0.5*abs_hz2
+       pos_z += 0.5*abs_hz2;
+       
+       //also in that case, the dis[5] = 1 cm i.e. distance of next sensor (7th) with the abs
+       dist[5] = 1*CLHEP::cm;
+     }
+   
+
+
    if(i != (nsensorLayer-1)) pos_z += dist[i] + 0.5*sensorThickness[i] + 0.5*sensorThickness[i+1];
  }
-
-
+ 
+ 
  if(verbosity > 0) std::cout<<"Done defining the geometry "<<std::endl;
 
 
